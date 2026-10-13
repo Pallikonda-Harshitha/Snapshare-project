@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My photos · SnapShare</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="/css/styles.css" rel="stylesheet">
+  <script src="/js/theme.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="/js/app.js" defer></script>
+  <script src="/js/motion.js" defer></script>
+  <script src="/js/my-photos.js" defer></script>
+</head>
+<body>
+  <div id="nav"></div>
+  <main class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+      <div>
+        <h1 class="page-title">My photos</h1>
+        <p class="page-sub" id="summary"></p>
+      </div>
+      <a class="btn btn-navy" href="/upload.html"><i class="bi bi-upload"></i> Upload</a>
+    </div>
+
+    <div id="sample-banner" class="sample-banner mb-4 d-none">
+      <div>
+        <div class="fw-semibold"><i class="bi bi-stars"></i> Sample photos to get you started</div>
+        <div class="small text-secondary">They are private to you. Keep them, edit them, or remove them all whenever you like.</div>
+      </div>
+      <button class="btn btn-outline-navy btn-sm" id="remove-samples"><i class="bi bi-trash"></i> Remove sample photos</button>
+    </div>
+
+    <div class="row g-2 mb-4">
+      <div class="col-md-5"><input id="q" class="form-control" type="search" placeholder="Search your photos" aria-label="Search your photos"></div>
+      <div class="col-6 col-md-3">
+        <select id="visibility" class="form-select" aria-label="Filter by visibility">
+          <option value="">All visibility</option>
+          <option value="public">Public</option>
+          <option value="private">Private</option>
+        </select>
+      </div>
+      <div class="col-6 col-md-4"><select id="category" class="form-select" aria-label="Filter by category"><option value="">All categories</option></select></div>
+    </div>
+
+    <div id="gallery" class="gallery"></div>
+    <div id="empty" class="empty d-none">
+      <i class="bi bi-image"></i>
+      <div class="fw-medium">No photos here yet</div>
+      <div class="mb-3">Upload your first photo to get started.</div>
+      <a class="btn btn-navy" href="/upload.html">Upload a photo</a>
+    </div>
+  </main>
+</body>
+</html>

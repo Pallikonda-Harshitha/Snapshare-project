@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Photo · SnapShare</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="/css/styles.css" rel="stylesheet">
+  <script src="/js/theme.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="/js/app.js" defer></script>
+  <script src="/js/motion.js" defer></script>
+  <script src="/js/photo.js" defer></script>
+</head>
+<body>
+  <div id="nav"></div>
+  <main class="container py-4">
+    <div id="missing" class="empty d-none">
+      <i class="bi bi-eye-slash"></i>
+      <div class="fw-medium">This photo isn't available</div>
+      <div class="mb-3">It may be private or may have been deleted.</div>
+      <a class="btn btn-navy" href="/explore.html">Back to Explore</a>
+    </div>
+
+    <div id="content" class="d-none">
+      <a href="/explore.html" class="small text-decoration-none d-inline-block mb-3"><i class="bi bi-arrow-left"></i> Back to Gallery</a>
+      <div class="detail-grid">
+        <div>
+          <div class="photo-view" id="viewer">
+            <img id="img" alt="">
+            <button class="viewer-nav prev d-none" id="prev" aria-label="Previous photo"><i class="bi bi-chevron-left"></i></button>
+            <button class="viewer-nav next d-none" id="next" aria-label="Next photo"><i class="bi bi-chevron-right"></i></button>
+            <span class="viewer-count d-none" id="viewer-count"></span>
+          </div>
+          <div class="thumbs d-none" id="thumbs" aria-label="Photos in this post"></div>
+          <div id="add-wrap" class="d-none mt-3">
+            <button type="button" class="btn btn-ghost btn-sm" id="add-btn"><i class="bi bi-plus-lg"></i> Add photos to this post</button>
+            <input type="file" id="add-files" accept="image/jpeg,image/png,image/webp,image/gif" multiple hidden>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div id="badge" class="mb-2"></div>
+          <h1 class="fs-4 fw-semibold mb-3" id="title"></h1>
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span id="owner-avatar"></span>
+            <div>
+              <div class="fw-medium small" id="owner-name"></div>
+              <div class="text-secondary small" id="posted"></div>
+            </div>
+          </div>
+
+          <div class="stat-row mb-3">
+            <button id="like" aria-pressed="false"><i class="bi bi-heart"></i> <span id="likes">0</span></button>
+            <span><i class="bi bi-chat"></i> <span id="comment-count">0</span></span>
+            <span><i class="bi bi-eye"></i> <span id="views">0</span></span>
+            <button id="share" class="d-none"><i class="bi bi-share"></i> Share</button>
+            <a id="download"><i class="bi bi-download"></i> Download</a>
+          </div>
+
+          <p id="description" class="mb-3"></p>
+          <div id="tags" class="d-flex flex-wrap gap-2 mb-4"></div>
+
+          <h2 class="fs-6 fw-semibold mb-2">Details</h2>
+          <dl class="meta-list mb-4">
+            <dt>Category</dt><dd id="cat"></dd>
+            <dt>Uploaded</dt><dd id="date"></dd>
+            <dt>File size</dt><dd id="size"></dd>
+            <dt>Album</dt><dd id="album">None</dd>
+          </dl>
+
+          <div id="owner-tools" class="d-none mb-4 pt-3 border-top" style="border-color: var(--line) !important">
+            <div class="small text-secondary mb-2">Manage</div>
+            <div class="d-flex flex-wrap gap-2">
+              <button class="btn btn-ghost btn-sm" id="toggle-vis"></button>
+              <button class="btn btn-ghost btn-sm" data-bs-toggle="modal" data-bs-target="#edit-modal"><i class="bi bi-pencil"></i> Edit</button>
+              <button class="btn btn-ghost btn-sm" id="delete" style="color: var(--danger)"><i class="bi bi-trash"></i> Delete</button>
+            </div>
+          </div>
+
+          <h2 class="fs-6 fw-semibold mb-2">Comments (<span id="comment-total">0</span>)</h2>
+          <form id="comment-form" class="d-flex gap-2" novalidate>
+            <input class="form-control" id="comment-text" maxlength="500" placeholder="Add a comment" aria-label="Add a comment">
+            <button class="btn btn-navy" type="submit">Post</button>
+          </form>
+          <div id="comment-hint" class="small text-secondary mt-2 d-none"><a href="/login.html">Log in</a> to like and comment.</div>
+          <div id="comments"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal fade" id="edit-modal" tabindex="-1" aria-labelledby="edit-title" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" id="edit-form" novalidate>
+        <div class="modal-header">
+          <h2 class="modal-title fs-5" id="edit-title">Edit post</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="edit-error" class="alert alert-danger d-none" role="alert"></div>
+          <div class="mb-3"><label class="form-label" for="e-title">Title</label><input class="form-control" id="e-title" maxlength="100"></div>
+          <div class="mb-3"><label class="form-label" for="e-description">Description</label><textarea class="form-control" id="e-description" rows="3" maxlength="500"></textarea></div>
+          <div class="mb-3"><label class="form-label" for="e-tags">Tags</label><input class="form-control" id="e-tags"></div>
+          <div class="row g-3">
+            <div class="col-6"><label class="form-label" for="e-category">Category</label><select class="form-select" id="e-category"></select></div>
+            <div class="col-6"><label class="form-label" for="e-album">Album</label><select class="form-select" id="e-album"><option value="">None</option></select></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-navy" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-navy">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

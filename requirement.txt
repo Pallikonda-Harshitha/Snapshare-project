@@ -1,0 +1,73 @@
+SNAPSHARE - WHAT YOU NEED TO RUN IT
+====================================
+
+1. INSTALL THIS ONCE (only thing not included in the folder)
+------------------------------------------------------------
+   Node.js 18 or newer (the "LTS" version is best)
+   Download: https://nodejs.org
+
+   To check it is installed, open a terminal and run:
+       node -v
+   It should print a version such as v20.11.0 or higher.
+
+
+2. INSTALL EVERYTHING ELSE WITH ONE COMMAND
+-------------------------------------------
+   Open a terminal inside this folder (the one that contains package.json) and run:
+
+       npm install
+
+   That downloads every library the project needs (listed below) and creates
+   the .env settings file automatically.
+
+
+3. START THE WEBSITE
+--------------------
+       npm start
+
+   Then open http://localhost:3000 in your browser.
+
+
+WINDOWS SHORTCUT
+----------------
+   Double-click  start.bat  . It checks Node.js, installs anything missing,
+   starts the site and opens the browser for you.
+
+
+OPTIONAL
+--------
+   npm run seed     Adds 14 sample posts (30 photos). Run it while the site is
+                    running, in a second terminal.
+   npm test         Runs the automatic checks.
+
+
+LIBRARIES THAT "npm install" DOWNLOADS (from package.json)
+----------------------------------------------------------
+   express          web server
+   multer           photo uploads
+   bcryptjs         password hashing
+   jsonwebtoken     login sessions
+   cookie-parser    reads the login cookie
+   dotenv           reads the .env settings file
+
+   The pages also load Bootstrap, Bootstrap Icons and the Inter font from the
+   internet, so the first run needs an internet connection.
+
+
+NOTES FOR WHOEVER RECEIVES THIS FOLDER
+--------------------------------------
+   - The folder "node_modules" is NOT needed and should not be copied. It is
+     rebuilt by "npm install".
+   - No database is required. Data is stored in the "data" folder and photos in
+     the "uploads" folder.
+   - If port 3000 is busy, create or edit .env and set PORT=3001, then
+     run "npm start" again.
+
+
+TROUBLESHOOTING
+---------------
+   "npm is not recognized"          Node.js is not installed, or the terminal
+                                    was opened before installing. Install Node.js
+                                    and open a new terminal.
+   "EADDRINUSE" / port already used Change PORT in .env (see above).
+   Page looks unstyled              No internet connection (CDN files).
