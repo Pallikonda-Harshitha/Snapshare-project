@@ -12,7 +12,7 @@ npm test                 # access-control checks
 npm run seed             # optional: add 14 sample posts, 30 photos (site must be running)
 ```
 
-Node 18 or newer. No database setup is needed to run the project right now (see "Data storage").
+Node 18 or newer. Data is stored in MongoDB when `MONGODB_URI` is set, otherwise in a JSON file, so no database setup is required (see "Data storage").
 
 ## What works
 
@@ -48,7 +48,8 @@ Node 18 or newer. No database setup is needed to run the project right now (see 
 ```
 server.js                 Express app setup
 src/config.js             Settings and limits
-src/store/index.js        Data access layer (swap point for MongoDB)
+src/store/index.js        Data access layer (JSON file or MongoDB)
+src/store/mongo.js        MongoDB connection, loading and writes
 src/middleware/           auth (JWT cookie), upload (multer + validation)
 src/lib/starter.js        Starter content for new accounts
 src/routes/               auth, photos, albums, stats
@@ -83,9 +84,17 @@ test/smoke.js             Access-control tests
 
 ## Data storage
 
-The data layer in `src/store/index.js` currently persists to `data/db.json`, so the project runs without installing anything. Routes only call `insert`, `findById`, `find`, `update` and `remove`.
+Routes only call `insert`, `findById`, `find`, `update` and `remove` from `src/store/index.js`. Where the data is saved depends on `.env`:
 
-To move to MongoDB, reimplement those five methods for `users`, `photos` and `albums` with Mongoose models and keep the routes unchanged. Uploaded images are on local disk in `uploads/`; for deployment, move them to Cloudinary or similar and keep serving private images through a permission check or short-lived signed URLs.
+| `MONGODB_URI` | Storage |
+|---|---|
+| empty | `data/db.json` (no setup) |
+| `mongodb://127.0.0.1:27017` | Local MongoDB, database `snapshare` (or `MONGODB_DB`) |
+| Atlas connection string | MongoDB Atlas |
+
+With MongoDB, data is loaded into memory at startup and every change is written to MongoDB in order. The collections are `users`, `photos`, `albums`, `likes` and `comments`; open the same address in MongoDB Compass to browse them. The first time the app connects to an empty database it imports `data/db.json`, so existing accounts and posts carry over. The server prints `Data storage: MongoDB` or `Data storage: JSON file` on startup. Tests always use a throwaway JSON file.
+
+Uploaded images stay on local disk in `uploads/`. For deployment, move them to Cloudinary or similar and keep serving private images through a permission check or short-lived signed URLs.
 
 ## Sample content
 
@@ -97,4 +106,4 @@ To move to MongoDB, reimplement those five methods for `users`, `photos` and `al
 
 ## Not built yet
 
-Share links with expiry, saved posts, follow, notifications, profile photos and settings, dashboard, map, admin tools, collaborative albums, ZIP download, color search and a MongoDB backend. These were built once and then deliberately removed; the files are kept in the `snapshare-big-build-backup` folder next to this project.
+Share links with expiry, saved posts, follow, notifications, profile photos and settings, dashboard, map, admin tools, collaborative albums, ZIP download, and color search. These were built once and then deliberately removed; the files are kept in the `snapshare-big-build-backup` folder next to this project.

@@ -45,11 +45,20 @@ app.use((err, _req, res, _next) => {
 });
 
 if (require.main === module) {
-  const demo = require('./src/lib/demo').ensureDemoContent();
-  if (demo) console.log(`Added ${demo} demo posts so the gallery is not empty.`);
-  const filled = require('./src/lib/starter').backfillStarterContent();
-  if (filled) console.log(`Added starter photos to ${filled} existing account${filled === 1 ? '' : 's'}.`);
-  app.listen(port, () => console.log(`SnapShare running at http://localhost:${port}`));
+  const db = require('./src/store');
+  db.ready
+    .then(() => {
+      console.log(`Data storage: ${db.backend}`);
+      const demo = require('./src/lib/demo').ensureDemoContent();
+      if (demo) console.log(`Added ${demo} demo posts so the gallery is not empty.`);
+      const filled = require('./src/lib/starter').backfillStarterContent();
+      if (filled) console.log(`Added starter photos to ${filled} existing account${filled === 1 ? '' : 's'}.`);
+      app.listen(port, () => console.log(`SnapShare running at http://localhost:${port}`));
+    })
+    .catch((err) => {
+      console.error(`Could not connect to MongoDB: ${err.message}`);
+      process.exit(1);
+    });
 }
 
 module.exports = app;

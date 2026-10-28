@@ -2,27 +2,36 @@
 //
 // Every route talks to `db.users`, `db.photos`, `db.albums`, `db.likes` and
 // `db.comments` through the same small API (insert, findById, find, update,
-// remove). Today that API is backed by a JSON file so the project runs with zero
-// setup. To move to MongoDB, replace the body of this file with Mongoose models
-// exposing the same methods; routes stay as is.
+// remove). Data is held in memory for fast reads, and every change is written
+// through to one of two places:
+//
+//   - MONGODB_URI set: MongoDB (see ./mongo.js)
+//   - otherwise: a JSON file (data/db.json), so the project runs with no setup
+//
+// Routes never know which one is in use. `db.ready` resolves once data is loaded.
 
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { dataFile } = require('../config');
+const { dataFile, mongoUri, mongoDb } = require('../config');
 
-fs.mkdirSync(path.dirname(dataFile), { recursive: true });
+const NAMES = ['users', 'photos', 'albums', 'likes', 'comments'];
 
-const state = { users: [], photos: [], albums: [], likes: [], comments: [] };
-if (fs.existsSync(dataFile)) {
-  Object.assign(state, JSON.parse(fs.readFileSync(dataFile, 'utf8')));
+const state = Object.fromEntries(NAMES.map((n) => [n, []]));
+
+function createFileSink(file) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  if (fs.existsSync(file)) Object.assign(state, JSON.parse(fs.readFileSync(file, 'utf8')));
+
+  const persist = () => {
+    const tmp = file + '.tmp';
+    fs.writeFileSync(tmp, JSON.stringify(state, null, 2));
+    fs.renameSync(tmp, file);
+  };
+  return { load: async () => {}, insert: persist, update: persist, remove: persist };
 }
 
-function persist() {
-  const tmp = dataFile + '.tmp';
-  fs.writeFileSync(tmp, JSON.stringify(state, null, 2));
-  fs.renameSync(tmp, dataFile);
-}
+const sink = mongoUri ? require('./mongo').createMongoSink(mongoUri, mongoDb, NAMES, state) : createFileSink(dataFile);
 
 function collection(name) {
   const rows = () => state[name];
@@ -30,7 +39,7 @@ function collection(name) {
     insert(doc) {
       const row = { id: crypto.randomUUID(), createdAt: new Date().toISOString(), ...doc };
       rows().push(row);
-      persist();
+      sink.insert(name, row);
       return row;
     },
     findById(id) {
@@ -43,23 +52,23 @@ function collection(name) {
       const row = this.findById(id);
       if (!row) return null;
       Object.assign(row, patch);
-      persist();
+      sink.update(name, row);
       return row;
     },
     remove(id) {
       const i = rows().findIndex((r) => r.id === id);
       if (i === -1) return false;
       rows().splice(i, 1);
-      persist();
+      sink.remove(name, id);
       return true;
     },
   };
 }
 
-module.exports = {
-  users: collection('users'),
-  photos: collection('photos'),
-  albums: collection('albums'),
-  likes: collection('likes'),
-  comments: collection('comments'),
-};
+const db = Object.fromEntries(NAMES.map((n) => [n, collection(n)]));
+
+// The server waits for this before it starts listening.
+db.ready = sink.load(dataFile);
+db.backend = mongoUri ? 'MongoDB' : 'JSON file';
+
+module.exports = db;

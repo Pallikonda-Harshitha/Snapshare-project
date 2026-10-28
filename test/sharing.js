@@ -9,6 +9,7 @@ const assert = require('assert');
 
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'snapshare-sharing-'));
 process.env.DATA_FILE = path.join(tmp, 'db.json');
+process.env.MONGODB_URI = ''; // always test against a throwaway file, never a real database
 process.env.UPLOAD_DIR = path.join(tmp, 'uploads');
 process.env.JWT_SECRET = 'test-secret';
 process.env.STARTER_CONTENT = 'off';

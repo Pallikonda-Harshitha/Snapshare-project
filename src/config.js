@@ -17,6 +17,9 @@ module.exports = {
   publicDir: path.join(root, 'public'),
   uploadDir: process.env.UPLOAD_DIR || path.join(root, 'uploads'),
   dataFile: process.env.DATA_FILE || path.join(root, 'data', 'db.json'),
+  // Leave MONGODB_URI empty to store data in dataFile instead.
+  mongoUri: process.env.MONGODB_URI || '',
+  mongoDb: process.env.MONGODB_DB || 'snapshare',
   maxFileSize: 10 * 1024 * 1024,
   maxImagesPerPost: 10,
   categories: ['Nature', 'Travel', 'Technology', 'Food', 'People', 'Animals', 'Architecture', 'Events', 'Other'],
