@@ -58,8 +58,8 @@ function collection(name) {
     remove(id) {
       const i = rows().findIndex((r) => r.id === id);
       if (i === -1) return false;
-      rows().splice(i, 1);
-      sink.remove(name, id);
+      const [row] = rows().splice(i, 1);
+      sink.remove(name, id, row);
       return true;
     },
   };

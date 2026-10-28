@@ -94,7 +94,7 @@ Routes only call `insert`, `findById`, `find`, `update` and `remove` from `src/s
 
 With MongoDB, data is loaded into memory at startup and every change is written to MongoDB in order. The collections are `users`, `photos`, `albums`, `likes` and `comments`; open the same address in MongoDB Compass to browse them. The first time the app connects to an empty database it imports `data/db.json`, so existing accounts and posts carry over. The server prints `Data storage: MongoDB` or `Data storage: JSON file` on startup. Tests always use a throwaway JSON file.
 
-Uploaded images stay on local disk in `uploads/`. For deployment, move them to Cloudinary or similar and keep serving private images through a permission check or short-lived signed URLs.
+Uploaded images are served from `uploads/`. With MongoDB they are also copied into a GridFS bucket (`images.files` and `images.chunks` in Compass), and on startup any image missing from `uploads/` is restored from it. This keeps images working on hosts that wipe the disk on restart, such as Render's free plan. Private images are still only served through the permission check.
 
 ## Sample content
 
