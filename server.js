@@ -37,8 +37,9 @@ app.use((err, _req, res, _next) => {
   if (err.code === 'LIMIT_UNEXPECTED_FILE' || err.code === 'LIMIT_FILE_COUNT') {
     return res.status(400).json({ error: 'A post can hold up to 10 photos.' });
   }
-  if (err.status) return res.status(err.status).json({ error: err.message });
+  // Checked before err.status, which body-parser also sets, so the raw parser message is never shown.
   if (err.type === 'entity.parse.failed') return res.status(400).json({ error: 'Invalid request body.' });
+  if (err.status) return res.status(err.status).json({ error: err.message });
   console.error(err);
   res.status(500).json({ error: 'Something went wrong on our side. Try again.' });
 });
